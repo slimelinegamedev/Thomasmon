@@ -14,28 +14,28 @@ public class Mockbattle : MonoBehaviour {
 
 			Pokemon bulbasaur = new Pokemon ();
 
-			tackle.aname = "Tackle";
+			tackle.aname = "Milchmelker";
 			tackle.ap = 30;
 			tackle.maxAp = 30;
 			tackle.precise = 100;
 			tackle.strenght = 10;
 			tackle.type = Attack.Type.physical;
 
-			tackle2.aname = "Yet another Tackle";
+			tackle2.aname = "Gemuhe";
 			tackle2.ap = 20;
 			tackle2.maxAp = 30;
 			tackle2.precise = 100;
 			tackle2.strenght = 10;
 			tackle2.type = Attack.Type.physical;
 
-			tackle3.aname = "Even more Tackle";
+			tackle3.aname = "Hufstampfer";
 			tackle3.ap = 10;
 			tackle3.maxAp = 30;
 			tackle3.precise = 100;
 			tackle3.strenght = 10;
 			tackle3.type = Attack.Type.physical;
 
-			tackle4.aname = "Much Tackle";
+			tackle4.aname = "Dubstepkanone";
 			tackle4.ap = 0;
 			tackle4.maxAp = 30;
 			tackle4.precise = 100;
@@ -114,7 +114,7 @@ public class Mockbattle : MonoBehaviour {
 			bulba2.hp = 50;
 			bulba2.picture = Resources.LoadAll<Sprite> ("Sprites/pokemon_battle")[0];
 			bulba2.attacks = new Attack[4];
-			bulba2.attacks [0] = tackle;
+			bulba2.attacks [0] = tackle5;
 			bulba2.attacks [1] = tackle6;
 			bulba2.attacks [2] = tackle7;
 			bulba2.attacks [3] = tackle8;

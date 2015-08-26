@@ -16,6 +16,9 @@ public class BattleHandler : MonoBehaviour {
 	public GameObject attackOverlay;
 	public GameObject separator;
 
+	public GameObject msgBox;
+	public GameObject msgBoxText;
+
 	public bool firstupdate = true;
 	public bool battleEnd = false;
 
@@ -35,10 +38,29 @@ public class BattleHandler : MonoBehaviour {
 			updateStats ();
 			yield return StartCoroutine(friendlyAttack ());
 			updateStats ();
-			opponentAttack ();
+			yield return StartCoroutine(checkForBattleEnd ());
+			yield return StartCoroutine(opponentAttack ());
 			updateStats ();
+			yield return StartCoroutine(checkForBattleEnd ());
 		}
+
+		InterSceneData.main.destinatedSpawn = "LAST";
+		Application.LoadLevel (InterSceneData.main.lastArea);
 		yield return null;
+	}
+
+	IEnumerator checkForBattleEnd () {
+		if (InterSceneData.main.battle_friendly.hp <= 0) {
+			battleEnd = true;
+			yield return StartCoroutine (showMessage (InterSceneData.main.battle_friendly.name + " wurde besiegt", 3f));
+			InterSceneData.main.destinatedSpawn = "LAST";
+			Application.LoadLevel (InterSceneData.main.lastArea);
+		} else if (InterSceneData.main.battle_opponent.hp <= 0) {
+			battleEnd = true;
+			yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " wurde besiegt", 3f));
+			InterSceneData.main.destinatedSpawn = "LAST";
+			Application.LoadLevel (InterSceneData.main.lastArea);
+		}
 	}
 
 	IEnumerator friendlyAttack () {
@@ -51,9 +73,9 @@ public class BattleHandler : MonoBehaviour {
 		attackOverlay.SetActive (false);
 		separator.SetActive (false);
 
-		Debug.Log ("Before: " + InterSceneData.main.battle_friendly.attacks[eventNo].ap.ToString ());
 		InterSceneData.main.battle_friendly.attacks[eventNo].ap -= 1;
-		Debug.Log ("After: " + InterSceneData.main.battle_friendly.attacks[eventNo].ap.ToString ());
+
+		yield return StartCoroutine (showMessage (InterSceneData.main.battle_friendly.name + " setzt " + InterSceneData.main.battle_friendly.attacks[eventNo].aname + " ein", 1.5f));
 
 		Debug.Log ("Calculating damage");
 		int damage = calculateDamage (InterSceneData.main.battle_friendly, InterSceneData.main.battle_opponent, usersChoice);
@@ -74,7 +96,7 @@ public class BattleHandler : MonoBehaviour {
 		yield return null;
 	}
 
-	void opponentAttack () {
+	IEnumerator opponentAttack () {
 		setControlLock (true);
 
 		Attack chosen = new Attack ();
@@ -86,6 +108,8 @@ public class BattleHandler : MonoBehaviour {
 			InterSceneData.main.battle_opponent.attacks[attackIndex].ap -= 1;
 			Debug.Log ("After: " + InterSceneData.main.battle_opponent.attacks[attackIndex].ap.ToString ());
 		} while (chosen.ap <= 0);
+
+		yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " setzt " + InterSceneData.main.battle_opponent.attacks[eventNo].aname + " ein", 1.5f));
 
 		int damage = calculateDamage (InterSceneData.main.battle_opponent, InterSceneData.main.battle_friendly, chosen);
 
@@ -162,6 +186,13 @@ public class BattleHandler : MonoBehaviour {
 		} else {
 			fl_kp_txt.color = Color.red;
 		}
+	}
+
+	IEnumerator showMessage (string text, float duration) {
+		msgBoxText.GetComponent<Text> ().text = text;
+		msgBox.SetActive (true);
+		yield return new WaitForSeconds (duration);
+		msgBox.SetActive (false);
 	}
 
 	public void attack1Pressed (BaseEventData data) {
