@@ -106,4 +106,11 @@ public class TalkController : MonoBehaviour, IEventSystemHandler {
 			actionPressed = true;
 		}
 	}
+
+	public IEnumerator showMessage (string message, float duration) {
+		textBox_text.GetComponent<Text> ().text = message;
+		textBox.SetActive (true);
+		yield return new WaitForSeconds (duration);
+		textBox.SetActive (false);
+	}
 }

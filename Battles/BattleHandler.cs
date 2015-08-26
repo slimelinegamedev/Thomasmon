@@ -58,7 +58,7 @@ public class BattleHandler : MonoBehaviour {
 		} else if (InterSceneData.main.battle_opponent.hp <= 0) {
 			battleEnd = true;
 			yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " wurde besiegt", 3f));
-			InterSceneData.main.destinatedSpawn = "LAST";
+			InterSceneData.main.destinatedSpawn = "TRAINER";
 			Application.LoadLevel (InterSceneData.main.lastArea);
 		}
 	}

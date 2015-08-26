@@ -16,13 +16,15 @@ public class InterSceneData : MonoBehaviour {
 	public string destinatedSpawn;
 
 	// Battle information
-	public Pokemon battle_opponent;
-	public Pokemon battle_friendly;
+	public Pokemon 	battle_opponent;
+	public Pokemon 	battle_friendly;
+	public uint		battle_trainer;
 
 	// Player information
 	public Inventory inventory;
 	public Pokemons pokemons;
 	public string collectedItems;
+	public string defeatedTrainers;
 	public string playerName;
 	public float minutesPlayed;
 	public int money;
@@ -36,6 +38,7 @@ public class InterSceneData : MonoBehaviour {
 			main = this;
 			this.destinatedSpawn = "DEFAULT";
 			this.collectedItems = ";";
+			this.defeatedTrainers = ";";
 			this.inventory = gameObject.AddComponent<Inventory> ();
 			this.pokemons = gameObject.AddComponent<Pokemons> ();
 			this.battle_opponent = new Pokemon ();

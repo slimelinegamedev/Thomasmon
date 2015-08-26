@@ -18,6 +18,10 @@ public class InterSceneDataController : MonoBehaviour {
 			if (InterSceneData.main.destinatedSpawn == "LAST") {
 				player.transform.position = new Vector2 (InterSceneData.main.posX, InterSceneData.main.posY);
 				InterSceneData.main.destinatedSpawn = "DEFAULT";
+			} else if (InterSceneData.main.destinatedSpawn == "TRAINER") {
+				player.transform.position = new Vector2 (InterSceneData.main.posX, InterSceneData.main.posY);
+				InterSceneData.main.destinatedSpawn = "DEFAULT";
+				StartCoroutine (GameObject.Find ("trainer_" + InterSceneData.main.battle_trainer).GetComponent<Trainer> ().defeated ());
 			} else if (InterSceneData.main.destinatedSpawn != "DEFAULT") {
 				GameObject spawn = GameObject.Find (InterSceneData.main.destinatedSpawn);
 				player.transform.position = spawn.transform.position;
