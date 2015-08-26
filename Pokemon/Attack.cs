@@ -6,7 +6,7 @@ public class Attack {
 	public string aname;
 	public string description;
 
-	public uint ap;
+	public int ap;
 	public uint maxAp;
 
 	public uint strenght;
