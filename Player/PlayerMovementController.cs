@@ -40,19 +40,19 @@ public class PlayerMovementController : MonoBehaviour, IEventSystemHandler {
 	// Update is called once per frame
 	void Update () {
 
-		if (isAllowedToMove) {
-			float movement_x = Input.GetAxisRaw ("Horizontal") + button_movement_x;
-			float movement_y = Input.GetAxisRaw ("Vertical") + button_movement_y;
+	float movement_x = Input.GetAxisRaw ("Horizontal") + button_movement_x;
+		float movement_y = Input.GetAxisRaw ("Vertical") + button_movement_y;
 		
-			float multiplicator = WalkingSpeed;
+		float multiplicator = WalkingSpeed;
+				
+		if (Input.GetKey (KeyCode.LeftShift) || button_running) {
+			multiplicator = RunningSpeed;
+		}
 
-			if (Input.GetKey (KeyCode.LeftShift) || button_running) {
-				multiplicator = RunningSpeed;
-			}
+		movement = new Vector2 (0, 0);
 
-			movement = new Vector2 (0, 0);
-
-			if (movement_x != 0 || movement_y != 0) {
+		if (movement_x != 0 || movement_y != 0) {
+			if (isAllowedToMove) {
 				if (movement_x != 0 && movement_y != 0) {
 					if (lastMover == "y") {
 						movement = new Vector2 (movement_x, 0);
@@ -79,17 +79,20 @@ public class PlayerMovementController : MonoBehaviour, IEventSystemHandler {
 					animator.SetFloat ("inp_y", movement.y);
 					animator.SetFloat ("inp_x", 0);
 				}
-
 			} else {
+				movement = Vector2.zero;
+			}
+
+		} else {
 				animator.SetBool ("isIdle", true);
-			}
-
-			body.MovePosition (body.position + movement * multiplicator * Time.deltaTime);
-
-			if (movement != Vector2.zero) {
-				heading = movement;
-			}
 		}
+
+		body.MovePosition (body.position + movement * multiplicator * Time.deltaTime);
+
+		if (movement != Vector2.zero) {
+				heading = movement;
+		}
+
 	}
 
 	public void inp_left_on (BaseEventData EventData) {
@@ -127,6 +130,7 @@ public class PlayerMovementController : MonoBehaviour, IEventSystemHandler {
 	public void inp_run_on (BaseEventData EventData) {
 		button_running = true;
 		Debug.Log ("Now running");
+
 	}
 	
 	public void inp_run_off (BaseEventData EventData) {

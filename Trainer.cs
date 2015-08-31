@@ -22,9 +22,12 @@ public class Trainer : MonoBehaviour {
 
 	IEnumerator handleBattleRequest () {
 		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+		PlayerMovementController pmc = player.GetComponent<PlayerMovementController> ();
 		TalkController tcontroller = player.GetComponent<TalkController> ();
 
 		InterSceneData.main.battle_trainer = trainer_id;
+
+		pmc.isAllowedToMove = false;
 
 		foreach (string msg in beforeBattleMessage) {
 			yield return StartCoroutine (tcontroller.showMessage (msg, 2f));
@@ -42,6 +45,9 @@ public class Trainer : MonoBehaviour {
 
 		GameObject player = GameObject.FindGameObjectWithTag ("Player");
 		TalkController tcontroller = player.GetComponent<TalkController> ();
+		PlayerMovementController pmc = player.GetComponent<PlayerMovementController> ();
+
+		pmc.isAllowedToMove = false;
 
 		foreach (string msg in afterBattleMessage) {
 			yield return StartCoroutine (tcontroller.showMessage (msg, 2f));
@@ -49,5 +55,6 @@ public class Trainer : MonoBehaviour {
 		
 		InterSceneData.main.money += reward;
 		yield return StartCoroutine(tcontroller.showMessage (InterSceneData.main.playerName + " hat " + reward.ToString () + "$ erhalten!", 2f));
+		pmc.isAllowedToMove = true;
 	}
 }
