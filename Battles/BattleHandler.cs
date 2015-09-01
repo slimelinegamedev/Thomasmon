@@ -260,7 +260,7 @@ public class BattleHandler : MonoBehaviour {
 		if (op_percent > 35) {
 			op_kp_txt.color = Color.black;
 		} else if (op_percent > 15) {
-			op_kp_txt.color = Color.yellow;
+			op_kp_txt.color = Color.magenta;
 		} else {
 			op_kp_txt.color = Color.red;
 		}
