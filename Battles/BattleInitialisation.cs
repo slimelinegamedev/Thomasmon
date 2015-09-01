@@ -18,6 +18,9 @@ public class BattleInitialisation : MonoBehaviour {
 	public Text attack_3;
 	public Text attack_4;
 
+	public Text item_1;
+	public Text item_2;
+
 	public Pokemon opponent;
 	public Pokemon friendly;
 
@@ -41,6 +44,21 @@ public class BattleInitialisation : MonoBehaviour {
 		attack_2.text = friendly.attacks [1].aname + "\n AP: " + friendly.attacks [1].ap.ToString () + " / " + friendly.attacks [1].maxAp.ToString ();
 		attack_3.text = friendly.attacks [2].aname + "\n AP: " + friendly.attacks [2].ap.ToString () + " / " + friendly.attacks [2].maxAp.ToString ();
 		attack_4.text = friendly.attacks [3].aname + "\n AP: " + friendly.attacks [3].ap.ToString () + " / " + friendly.attacks [3].maxAp.ToString ();
+
+		uint medicine = 0;
+		uint balls = 0;
+
+		foreach (Object obj in InterSceneData.main.inventory.GetAll ().ToArray ()) {
+			Item itm = obj as Item;
+			if (itm.category == Item.Category.Medicine) {
+				medicine++;
+			} else if (itm.category == Item.Category.Ball) {
+				balls++;
+			}
+		}
+
+		item_1.text = "Trank\n" + medicine.ToString () + "x";
+		item_2.text = "Pokeball\n" + balls.ToString () + "x";
 
 		op_sprite.sprite = opponent.picture;
 	}

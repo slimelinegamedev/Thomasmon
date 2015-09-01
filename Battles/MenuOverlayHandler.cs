@@ -9,7 +9,7 @@ public class MenuOverlayHandler : MonoBehaviour {
 
 	public GameObject separator;
 	public GameObject attack_menu;
-	// public GameObject item_menu
+	public GameObject item_menu;
 
 	public void onAttackButtonPressed (BaseEventData data) {
 		if (!controlsLocked) {
@@ -20,13 +20,13 @@ public class MenuOverlayHandler : MonoBehaviour {
 
 	public void onItemButtonPressed (BaseEventData data) {
 		if (!controlsLocked) {
-			// separator.SetActive (true);
-			// item_menu.SetActive (true);
+			separator.SetActive (true);
+			item_menu.SetActive (true);
 		}
 	}
 
 	public void onBackButtonPressed (BaseEventData data) {
-		// item_menu.SetActive (false);
+		item_menu.SetActive (false);
 		attack_menu.SetActive (false);
 		separator.SetActive (false);
 	}

@@ -19,6 +19,7 @@ public class InterSceneData : MonoBehaviour {
 	public Pokemon 	battle_opponent;
 	public Pokemon 	battle_friendly;
 	public uint		battle_trainer;
+	public bool 	battle_isTrainer;
 
 	// Player information
 	public Inventory inventory;

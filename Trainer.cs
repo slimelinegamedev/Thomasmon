@@ -50,6 +50,7 @@ public class Trainer : MonoBehaviour {
 		pmc.isAllowedToMove = false;
 
 		foreach (string msg in afterBattleMessage) {
+			Debug.Log ("Printing " + msg);
 			yield return StartCoroutine (tcontroller.showMessage (msg, 2f));
 		}
 		

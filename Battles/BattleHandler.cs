@@ -13,7 +13,11 @@ public class BattleHandler : MonoBehaviour {
 	public Text attack_3;
 	public Text attack_4;
 
+	public Text item_1;
+	public Text item_2;
+
 	public GameObject attackOverlay;
+	public GameObject itemOverlay;
 	public GameObject separator;
 
 	public GameObject msgBox;
@@ -23,7 +27,9 @@ public class BattleHandler : MonoBehaviour {
 	public bool battleEnd = false;
 
 	public bool eventTriggered = false;
+	public bool itemChosen = false;
 	public Attack usersChoice;
+	public Item.Category usersItem;
 	public int eventNo;
 
 	void Update () {
@@ -68,22 +74,45 @@ public class BattleHandler : MonoBehaviour {
 		do {
 			Debug.Log ("Waiting for user input");
 			yield return StartCoroutine (waitForUserChoice ());
-		} while (usersChoice.ap <= 0);
+		} while (!choiceIsValid ());
 
+		itemOverlay.SetActive (false);
 		attackOverlay.SetActive (false);
 		separator.SetActive (false);
 
-		InterSceneData.main.battle_friendly.attacks[eventNo].ap -= 1;
+		if (!itemChosen) {
+			InterSceneData.main.battle_friendly.attacks [eventNo].ap -= 1;
 
-		yield return StartCoroutine (showMessage (InterSceneData.main.battle_friendly.name + " setzt " + InterSceneData.main.battle_friendly.attacks[eventNo].aname + " ein", 1.5f));
+			yield return StartCoroutine (showMessage (InterSceneData.main.battle_friendly.name + " setzt " + InterSceneData.main.battle_friendly.attacks [eventNo].aname + " ein", 1.5f));
 
-		Debug.Log ("Calculating damage");
-		int damage = calculateDamage (InterSceneData.main.battle_friendly, InterSceneData.main.battle_opponent, usersChoice);
+			Debug.Log ("Calculating damage");
+			int damage = calculateDamage (InterSceneData.main.battle_friendly, InterSceneData.main.battle_opponent, usersChoice);
 
-		if (damage >= InterSceneData.main.battle_opponent.hp) {
-			InterSceneData.main.battle_opponent.hp = 0;
+			if (damage >= InterSceneData.main.battle_opponent.hp) {
+				InterSceneData.main.battle_opponent.hp = 0;
+			} else {
+				InterSceneData.main.battle_opponent.hp -= (uint)damage;
+			}
 		} else {
-			InterSceneData.main.battle_opponent.hp -= (uint)damage;
+			if (usersItem == Item.Category.Ball) {
+				if (InterSceneData.main.battle_isTrainer) {
+					yield return StartCoroutine (showMessage ("Man darf nur wilde Pokemon fangen", 2f));
+				} else {
+					// To be implemented
+				}
+			} else {
+				itemOverlay.SetActive (false);
+				attackOverlay.SetActive (false);
+				separator.SetActive (false);
+
+				yield return StartCoroutine (showMessage (InterSceneData.main.playerName + " benutzt Trank", 2f));
+
+				InterSceneData.main.battle_friendly.hp += 20;
+				if (InterSceneData.main.battle_friendly.hp > InterSceneData.main.battle_friendly.maxHp)
+					InterSceneData.main.battle_friendly.hp = InterSceneData.main.battle_friendly.maxHp;
+
+				removeItem (usersItem);
+			}
 		}
 	}
 
@@ -94,6 +123,39 @@ public class BattleHandler : MonoBehaviour {
 
 		eventTriggered = false;
 		yield return null;
+	}
+
+	bool choiceIsValid () {
+		uint medicine = 0;
+		uint balls = 0;
+		
+		foreach (Object obj in InterSceneData.main.inventory.GetAll ().ToArray ()) {
+			Item itm = obj as Item;
+			if (itm.category == Item.Category.Medicine) {
+				medicine++;
+			} else if (itm.category == Item.Category.Ball) {
+				balls++;
+			}
+		}
+
+		if (itemChosen) {
+			if (usersItem == Item.Category.Medicine) {
+				if (medicine == 0)
+					return false;
+				else
+					return true;
+			} else {
+				if (balls == 0)
+					return false;
+				else
+					return true;
+			}
+		} else {
+			if (usersChoice.ap <= 0)
+				return false;
+			else
+				return true;
+		}
 	}
 
 	IEnumerator opponentAttack () {
@@ -146,8 +208,26 @@ public class BattleHandler : MonoBehaviour {
 	}
 
 	void updateStats () {
+		displayItems ();
 		displayAP ();
 		displayKP ();
+	}
+
+	void displayItems () {
+		uint medicine = 0;
+		uint balls = 0;
+		
+		foreach (Object obj in InterSceneData.main.inventory.GetAll ().ToArray ()) {
+			Item itm = obj as Item;
+			if (itm.category == Item.Category.Medicine) {
+				medicine++;
+			} else if (itm.category == Item.Category.Ball) {
+				balls++;
+			}
+		}
+		
+		item_1.text = "Trank\n" + medicine.ToString () + "x";
+		item_2.text = "Pokeball\n" + balls.ToString () + "x";
 	}
 
 	void displayAP () {
@@ -188,6 +268,21 @@ public class BattleHandler : MonoBehaviour {
 		}
 	}
 
+	void removeItem (Item.Category category) {
+		Item remove = new Item ();
+
+		foreach (Object obj in InterSceneData.main.inventory.GetAll ().ToArray ()) {
+			Item itm = obj as Item;
+			if (itm.category == Item.Category.Medicine && category == Item.Category.Medicine) {
+				remove = itm;
+			} else if (category == Item.Category.Ball && category == Item.Category.Ball) {
+				remove = itm;
+			}
+		}
+
+		InterSceneData.main.inventory.Remove (remove);
+	}
+
 	IEnumerator showMessage (string text, float duration) {
 		msgBoxText.GetComponent<Text> ().text = text;
 		msgBox.SetActive (true);
@@ -199,23 +294,39 @@ public class BattleHandler : MonoBehaviour {
 		eventTriggered = true;
 		usersChoice = InterSceneData.main.battle_friendly.attacks[0];
 		eventNo = 0;
+		itemChosen = false;
 	}
 
 	public void attack2Pressed (BaseEventData data) {
 		eventTriggered = true;
 		usersChoice = InterSceneData.main.battle_friendly.attacks[1];
 		eventNo = 1;
+		itemChosen = false;
 	}
 
 	public void attack3Pressed (BaseEventData data) {
 		eventTriggered = true;
 		usersChoice = InterSceneData.main.battle_friendly.attacks[2];
 		eventNo = 2;
+		itemChosen = false;
 	}
 
 	public void attack4Pressed (BaseEventData data) {
 		eventTriggered = true;
 		usersChoice = InterSceneData.main.battle_friendly.attacks[3];
 		eventNo = 3;
+		itemChosen = false;
+	}
+
+	public void item1Pressed (BaseEventData data) {
+		eventTriggered = true;
+		usersItem = Item.Category.Medicine;
+		itemChosen = true;
+	}
+
+	public void item2Pressed (BaseEventData data) {
+		eventTriggered = true;
+		usersItem = Item.Category.Ball;
+		itemChosen = true;
 	}
 }
