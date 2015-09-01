@@ -103,10 +103,26 @@ public class BattleHandler : MonoBehaviour {
 			}
 		} else {
 			if (usersItem == Item.Category.Ball) {
-				if (InterSceneData.main.battle_isTrainer) {
+				if (isTrainer) {
 					yield return StartCoroutine (showMessage ("Man darf nur wilde Pokemon fangen", 2f));
 				} else {
-					// To be implemented
+					itemOverlay.SetActive (false);
+					attackOverlay.SetActive (false);
+					separator.SetActive (false);
+					
+					yield return StartCoroutine (showMessage (InterSceneData.main.playerName + " wirft Pokeball", 2f));
+					removeItem (usersItem);
+
+					float success = 0.5f;
+					if (Random.value > success) {
+						InterSceneData.main.pokemons.Add (InterSceneData.main.battle_opponent);
+						yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " wurde gefangen!", 2f));
+						battleEnd = true;
+						InterSceneData.main.destinatedSpawn = "LAST";
+						Application.LoadLevel (InterSceneData.main.lastArea);
+					} else {
+						yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " hat sich befreit!", 2f));
+					}
 				}
 			} else {
 				itemOverlay.SetActive (false);

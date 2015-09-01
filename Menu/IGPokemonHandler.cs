@@ -19,7 +19,7 @@ public class IGPokemonHandler : MonoBehaviour {
 		
 		foreach (object obj in pokemons) {
 			Pokemon pokemon = obj as Pokemon;
-			text.text += pokemon.name + ": Level: " + pokemon.level.ToString () + " EP: " + pokemon.experience.ToString ();
+			text.text += pokemon.name + ": Level: " + pokemon.level.ToString () + " EP: " + pokemon.experience.ToString () + "\n";
 		}
 	}
 	
