@@ -36,8 +36,8 @@ public class TrainerPokemonDatabase : MonoBehaviour {
 		tackle3.type = Attack.Type.physical;
 		
 		tackle4.aname = "Dubstepkanone";
-		tackle4.ap = 0;
-		tackle4.maxAp = 30;
+		tackle4.ap = 40;
+		tackle4.maxAp = 50;
 		tackle4.precise = 100;
 		tackle4.strenght = 10;
 		tackle4.type = Attack.Type.physical;

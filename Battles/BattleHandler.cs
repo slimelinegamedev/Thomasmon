@@ -25,6 +25,7 @@ public class BattleHandler : MonoBehaviour {
 
 	public bool firstupdate = true;
 	public bool battleEnd = false;
+	public bool isTrainer = false;
 
 	public bool eventTriggered = false;
 	public bool itemChosen = false;
@@ -34,6 +35,8 @@ public class BattleHandler : MonoBehaviour {
 
 	void Update () {
 		if (firstupdate) {
+			if (InterSceneData.main.battle_trainer != 1337)
+				isTrainer = true;
 			StartCoroutine(battleLoop ());
 			firstupdate = false;
 		}
@@ -61,10 +64,15 @@ public class BattleHandler : MonoBehaviour {
 			yield return StartCoroutine (showMessage (InterSceneData.main.battle_friendly.name + " wurde besiegt", 3f));
 			InterSceneData.main.destinatedSpawn = "LAST";
 			Application.LoadLevel (InterSceneData.main.lastArea);
-		} else if (InterSceneData.main.battle_opponent.hp <= 0) {
+		} else if (InterSceneData.main.battle_opponent.hp <= 0 && isTrainer) {
 			battleEnd = true;
 			yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " wurde besiegt", 3f));
 			InterSceneData.main.destinatedSpawn = "TRAINER";
+			Application.LoadLevel (InterSceneData.main.lastArea);
+		} else if (InterSceneData.main.battle_opponent.hp <= 0 && !isTrainer){
+			battleEnd = true;
+			yield return StartCoroutine (showMessage (InterSceneData.main.battle_opponent.name + " wurde besiegt", 3f));
+			InterSceneData.main.destinatedSpawn = "LAST";
 			Application.LoadLevel (InterSceneData.main.lastArea);
 		}
 	}
